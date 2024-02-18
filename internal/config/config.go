@@ -9,7 +9,6 @@ import (
 type Config struct {
 	GoroutineCount           int    `json:"goroutine_count"`
 	OperationCalculationTime int    `json:"operation_calculation_time"`
-	OperationReclaimTime     int    `json:"operation_reclaim_time"`
 	SqlitePath               string `json:"sqlite_path"`
 }
 
