@@ -53,7 +53,7 @@ curl http://localhost:8081/expression/42
 ```
 
 ## Docs
-Documentation is available at [GitHub Wiki](https://github.com/iamnalinor/YL-math-calc/wiki).
+Documentation is available at [GitHub Wiki](https://github.com/iamnalinor/YL-math-calc/wiki/Docs).
 
 ## License
 This code is licensed under the GNU GPL v3.0. You can find the license in the LICENSE file.
