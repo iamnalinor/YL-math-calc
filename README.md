@@ -7,7 +7,7 @@ Task: Write a program that can calculate the value of a mathematical expression.
 ### Start
 The project itself has no dependencies. The recommended Go version is 1.22. It is not guaranteed to work on older versions.
 
-Clone the repository, **copy config.json.dist to config.json** and run the main.go file: `go run cmd/main.go`. Web server will start at localhost:8081.
+Clone the repository, **copy `config.json.dist` to `config.json`** and run the main.go file: `go run cmd/main.go`. Web server will start at localhost:8081.
 
 ### Creating expression
 POST `http://localhost:8081/newExpression`
