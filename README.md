@@ -32,6 +32,8 @@ Curl example:
 curl -X POST http://localhost:8081/createExpression -H "Content-Type: application/json" -d "{\"expression\": \"2+2*2\"}"
 ```
 
+# Currently only one expression is available: "2+2*2". I will implement expression parsing ASAP.
+
 ### Getting result
 GET `http://localhost:8081/expression/42`
 
