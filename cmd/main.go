@@ -12,7 +12,7 @@ import (
 func main() {
 	app := application.NewApplication()
 
-	shutDownFunc, err := server.Run(app.Logger)
+	shutDownFunc, err := server.Run(app)
 	if err != nil {
 		app.Logger.Fatal(err.Error())
 	}
