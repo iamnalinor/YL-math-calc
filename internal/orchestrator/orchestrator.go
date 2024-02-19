@@ -100,7 +100,7 @@ func (o *Orchestrator) Run() {
 // - StateCreated
 func (o *Orchestrator) SearchOperations(out chan<- operation.ID) {
 	for {
-		time.After(5 * time.Second)
+		<-time.After(5 * time.Second)
 
 		ops, err := o.app.Database.All()
 		if err != nil {
@@ -110,6 +110,7 @@ func (o *Orchestrator) SearchOperations(out chan<- operation.ID) {
 
 		for id, op := range ops {
 			if op.State == operation.StateCreated {
+				o.app.Logger.Printf("SearchOperations: sent new operation %d to orchestrator\n", id)
 				out <- id
 			}
 		}
