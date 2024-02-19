@@ -43,6 +43,7 @@ Result:
 {
   "id": 42,
   "type": "expression",
+  "expression": "2+2*2",
   "status": "done",
   "result": 6,
   "created_time": "2021-10-10T12:00:00Z",
