@@ -41,7 +41,12 @@ Result:
 
 ```json
 {
-    "todo": "TODO"
+  "id": 42,
+  "type": "expression",
+  "status": "done",
+  "result": 6,
+  "created_time": "2021-10-10T12:00:00Z",
+  "finished_time": "2021-10-10T12:01:00Z"
 }
 ```
 

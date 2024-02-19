@@ -8,10 +8,6 @@ import (
 	"net/http"
 )
 
-func getExpression(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello, World!"))
-}
-
 func Run(
 	app *application.Application,
 ) (func(context.Context) error, error) {
