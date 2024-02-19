@@ -60,3 +60,7 @@ Documentation is available at [GitHub Wiki](https://github.com/iamnalinor/YL-mat
 
 ## License
 This code is licensed under the GNU GPL v3.0. You can find the license in the LICENSE file.
+
+## Contact
+
+If you encounter any issues, feel free to contact me at Telegram: [@nalinor](https://t.me/nalinor)
