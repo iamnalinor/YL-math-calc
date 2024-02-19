@@ -26,7 +26,6 @@ const (
 	// StatePending means that the operation is ready to be processed by a worker.
 	StatePending
 	// StateProcessing means that the operation is currently running on a worker.
-	// In this case, TakenBy is not empty.
 	StateProcessing
 	// StateDone means that the operation has been completed successfully.
 	// In this case, Result is not empty.
@@ -57,17 +56,8 @@ type Operation struct {
 
 	Result float64
 	Error  error
-}
 
-// NewOperation returns a new Operation that should be passed to Database.Create() method.
-func NewOperation(op Operator, left, right float64, leftOperationID, rightOperationID ID) Operation {
-	return Operation{
-		Op:               op,
-		State:            StateCreated,
-		CreatedTime:      time.Now(),
-		Left:             left,
-		Right:            right,
-		LeftOperationID:  leftOperationID,
-		RightOperationID: rightOperationID,
-	}
+	// Expression field can be set in order to store the original expression.
+	// This doesn't influence orchestrator and workers in any way.
+	Expression string
 }
