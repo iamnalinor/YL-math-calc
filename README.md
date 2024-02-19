@@ -24,14 +24,12 @@ Additionally, you can specify idempotency token in `X-Idempotency-Token`.
 Result:
 
 ```json
-{
-    "todo": "TODO"
-}
+{"id":2}
 ```
 
 Curl example:
 ```bash
-curl -X POST http://localhost:8081/createExpression -H "Content-Type: application/json" -d "{\"expression\": \"2+2\"}"
+curl -X POST http://localhost:8081/createExpression -H "Content-Type: application/json" -d "{\"expression\": \"2+2*2\"}"
 ```
 
 ### Getting result
