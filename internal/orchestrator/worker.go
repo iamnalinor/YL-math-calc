@@ -32,6 +32,8 @@ func RunWorker(app *application.Application, in <-chan operation.ID, out chan<- 
 			app.Logger.Printf("worker: operation%d: calculated successfully, result is %f\n", op.Id, result)
 		}
 
+		op.FinishedTime = time.Now()
+
 		app.Database.Update(op)
 		app.Database.UpdatingMutex.Unlock()
 		if err != nil {
