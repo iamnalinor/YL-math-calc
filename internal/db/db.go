@@ -5,6 +5,7 @@ import (
 	"maps"
 	"math-calc/internal/operation"
 	"sync"
+	"time"
 )
 
 type Database struct {
@@ -32,6 +33,8 @@ func (d *Database) Create(op operation.Operation) (operation.ID, error) {
 		newId++
 	}
 	op.Id = newId
+	op.CreatedTime = time.Now()
+	op.State = operation.StateCreated
 
 	d.storage[newId] = op
 
