@@ -109,7 +109,9 @@ func (o *Orchestrator) SearchOperations(out chan<- operation.ID) {
 		}
 
 		for id, op := range ops {
-
+			if op.State == operation.StateCreated {
+				out <- id
+			}
 		}
 	}
 }
