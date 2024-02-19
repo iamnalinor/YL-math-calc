@@ -48,14 +48,16 @@ func (o *Orchestrator) Run() {
 		case operation.StateScheduled: // Sent from Run()
 			if op.LeftOperationID != 0 || op.RightOperationID != 0 {
 				op.State = operation.StateScheduled
-			} else {
-				op.State = operation.StatePending
+				o.app.Database.Update(op)
+				break
 			}
+
+			op.State = operation.StatePending
 			o.app.Database.Update(op)
+			fallthrough
 		case operation.StatePending:
 			workerIn <- id
-			op.State = operation.StateProcessing
-			o.app.Database.Update(op)
+			// State will be updated in RunWorker()
 		case operation.StateProcessing:
 			break
 		case operation.StateDone: // Sent from RunWorker()
@@ -73,7 +75,7 @@ func (o *Orchestrator) Run() {
 				}
 				if other.RightOperationID == id {
 					other.Right = op.Result
-					other.Right = 0
+					other.RightOperationID = 0
 					o.app.Database.Update(other)
 					go send(orchIn, other.Id)
 				}

@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"maps"
 	"math-calc/internal/operation"
 	"sync"
 	"time"
@@ -66,7 +65,5 @@ func (d *Database) All() (map[operation.ID]operation.Operation, error) {
 	d.mx.RLock()
 	defer d.mx.RUnlock()
 
-	duplicate := make(map[operation.ID]operation.Operation, len(d.storage))
-	maps.Copy(d.storage, duplicate)
-	return duplicate, nil
+	return d.storage, nil
 }
