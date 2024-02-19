@@ -15,6 +15,8 @@ func RunWorker(app *application.Application, in <-chan operation.ID, out chan<- 
 		app.Database.Update(op)
 		app.Database.UpdatingMutex.Unlock()
 
+		app.Logger.Printf("worker: operation%d: started\n", op.Id)
+
 		duration := time.Duration(app.Config.OperationCalculationTime) * time.Second
 		result, err := Calculate(op.Op, op.Left, op.Right, duration)
 		op, _ = app.Database.Get(op.Id)
