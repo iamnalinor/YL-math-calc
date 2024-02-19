@@ -10,12 +10,12 @@ The project itself has no dependencies. The recommended Go version is 1.22. It i
 Clone the repository, **copy `config.json.dist` to `config.json`** and run the main.go file: `go run cmd/main.go`. Web server will start at localhost:8081.
 
 ### Creating expression
-POST `http://localhost:8081/newExpression`
+POST `http://localhost:8081/createExpression`
 
 Body:
 ```json
 {
-    "expression": "2+2"
+    "expression": "2+2*2"
 }
 ```
 
@@ -31,13 +31,13 @@ Result:
 
 Curl example:
 ```bash
-curl -X POST http://localhost:8081/newExpression -H "Content-Type: application/json" -d "{\"expression\": \"2+2\"}"
+curl -X POST http://localhost:8081/createExpression -H "Content-Type: application/json" -d "{\"expression\": \"2+2\"}"
 ```
 
 ### Getting result
 GET `http://localhost:8081/expression/42`
 
-Replace 42 with the ID of the expression. You can obtain the ID from the /newExpression response.
+Replace 42 with the ID of the expression. You can obtain the ID from the /createExpression response.
 
 Result:
 
