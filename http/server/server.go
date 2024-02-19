@@ -9,6 +9,9 @@ import (
 	"go/token"
 	"io"
 	"log"
+	"math-calc/internal/application"
+	"math-calc/internal/operation"
+	"net"
 	"net/http"
 )
 
@@ -16,6 +19,10 @@ var usedIdempotentTokens = make(map[string]bool)
 
 type createInput struct {
 	Expression string `json:"expression"`
+}
+
+type createOutput struct {
+	Id operation.ID `json:"id"`
 }
 
 func createExpression(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +60,29 @@ func createExpression(w http.ResponseWriter, r *http.Request) {
 
 	parseExpression(input.Expression)
 
-	w.Write([]byte("Hello, World!"))
+	app := r.Context().Value("app").(*application.Application)
+
+	app.Database.UpdatingMutex.Lock()
+	opMul, err := app.Database.Create(operation.Operation{
+		Op:    operation.Multiply,
+		Left:  2,
+		Right: 2,
+	})
+
+	opAdd, err := app.Database.Create(operation.Operation{
+		Op:               operation.Addition,
+		Left:             2,
+		RightOperationID: opMul,
+		Expression:       "2+2*2",
+	})
+	app.Database.UpdatingMutex.Unlock()
+
+	w.WriteHeader(http.StatusCreated)
+	data, err := json.Marshal(createOutput{Id: opAdd})
+	if err != nil {
+		panic(err)
+	}
+	w.Write(data)
 }
 
 func parseExpression(expression string) (string, error) {
@@ -71,18 +100,23 @@ func getExpression(w http.ResponseWriter, r *http.Request) {
 }
 
 func Run(
-	logger *log.Logger,
+	app *application.Application,
 ) (func(context.Context) error, error) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/createExpression", createExpression)
 	mux.HandleFunc("/expression/", getExpression)
 
-	srv := &http.Server{Addr: "localhost:8081", Handler: loggingMiddleware(logger)(mux)}
+	srv := &http.Server{
+		Addr:    "localhost:8081",
+		Handler: loggingMiddleware(app.Logger)(mux),
+		BaseContext: func(listener net.Listener) context.Context {
+			return context.WithValue(context.Background(), "app", app)
+		}}
 
 	go func() {
 		// Запускаем сервер
 		if err := srv.ListenAndServe(); err != nil {
-			logger.Fatal("ListenAndServe", err)
+			app.Logger.Fatal("ListenAndServe", err)
 		}
 	}()
 	// вернем функцию для завершения работы сервера
