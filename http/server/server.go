@@ -2,16 +2,68 @@ package server
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"io"
 	"log"
 	"net/http"
-	"time"
 )
 
 var usedIdempotentTokens = make(map[string]bool)
 
-func create(w http.ResponseWriter, r *http.Request) {
+type createInput struct {
+	Expression string `json:"expression"`
+}
+
+func createExpression(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		fmt.Fprintf(w, "only POST requests are allowed")
+		return
+	}
+
+	idempToken := r.Header.Get("X-Idempotency-Token")
+	if idempToken != "" {
+		if usedIdempotentTokens[idempToken] {
+			fmt.Fprintln(w, "Idempotency token is already used")
+			return
+		}
+
+		usedIdempotentTokens[idempToken] = true
+	}
+
+	defer r.Body.Close()
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "failed to read request body: %s", err)
+		return
+	}
+
+	input := createInput{}
+	err = json.Unmarshal(body, &input)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "failed to unparse json: %s", err)
+		return
+	}
+
+	parseExpression(input.Expression)
+
 	w.Write([]byte("Hello, World!"))
-	usedIdempotentTokens[r.Header.Get("Idempotentcy-Token")] = true
+}
+
+func parseExpression(expression string) (string, error) {
+	expr, err := parser.ParseExpr(expression)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse expression: %w", err)
+	}
+
+	ast.Print(token.NewFileSet(), expr)
+	return "", nil
 }
 
 func getExpression(w http.ResponseWriter, r *http.Request) {
@@ -19,14 +71,13 @@ func getExpression(w http.ResponseWriter, r *http.Request) {
 }
 
 func Run(
-	ctx context.Context,
 	logger *log.Logger,
 ) (func(context.Context) error, error) {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/create", create)
-	mux.HandleFunc("/get", getExpression)
+	mux.HandleFunc("/createExpression", createExpression)
+	mux.HandleFunc("/expression/", getExpression)
 
-	srv := &http.Server{Addr: ":8081", Handler: loggingMiddleware(logger)(mux)}
+	srv := &http.Server{Addr: "localhost:8081", Handler: loggingMiddleware(logger)(mux)}
 
 	go func() {
 		// Запускаем сервер
@@ -42,18 +93,12 @@ func Run(
 func loggingMiddleware(logger *log.Logger) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			start := time.Now()
-
-			// Пропуск запроса к следующему обработчику
-			next.ServeHTTP(w, r)
-
-			// Завершение логирования после выполнения запроса
-			duration := time.Since(start)
-			logger.Printf("HTTP request %s, %s, %d sec\n",
+			logger.Printf("%s %s\n",
 				r.Method,
 				r.URL.Path,
-				duration/time.Second,
 			)
+
+			next.ServeHTTP(w, r)
 		})
 	}
 }
