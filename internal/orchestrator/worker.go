@@ -36,11 +36,8 @@ func RunWorker(app *application.Application, in <-chan operation.ID, out chan<- 
 
 		app.Database.Update(op)
 		app.Database.UpdatingMutex.Unlock()
-		if err != nil {
-			app.Logger.Printf("worker: operation%d: failed to update: %s\n", op.Id, err)
-		} else {
-			out <- op.Id
-		}
+
+		out <- op.Id
 	}
 }
 
