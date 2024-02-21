@@ -60,7 +60,7 @@ func (o *Orchestrator) Run() {
 			// State will be updated in RunWorker()
 		case operation.StateProcessing:
 			break
-		case operation.StateDone: // Sent from RunWorker()
+		case operation.StateDone: // Sent from RunWorker() and from itself
 			allOps, _ := o.app.Database.All()
 			for _, other := range allOps {
 				if other.State != operation.StateScheduled {
