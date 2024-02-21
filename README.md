@@ -6,10 +6,17 @@
 Task: Write a program that can calculate the value of a mathematical expression. But there's a catch: every operation takes a lot of time to be completed, say, 1 minute. The program should use Go parallelism to calculate the expression faster.
 
 ## Usage
-### Start
-The project itself has no dependencies. The recommended Go version is 1.22. It is not guaranteed to work on older versions.
 
-Clone the repository, **copy `config.json.dist` to `config.json`** and run the main.go file: `go run cmd/main.go`. Web server will start at localhost:8081.
+### Setup
+
+1. Install Go from [the official website](https://golang.org/dl/).
+2. Clone the repository or download the source code.
+3. Run `go run/cmd/main.go` in the project directory.
+
+The project itself has no dependencies. The recommended Go version is 1.22. It should work on 1.21 too, however, it is
+not guaranteed.
+
+Web server will start at [localhost:8081](http://localhost:8081).
 
 ### Creating expression
 POST `http://localhost:8081/createExpression`
