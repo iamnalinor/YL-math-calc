@@ -41,6 +41,14 @@ Curl example:
 curl -X POST http://localhost:8081/createExpression -H "Content-Type: application/json" -d "{\"expression\": \"2+2*2\"}"
 ```
 
+Examples of expressions:
+
+- `2+2*2`
+- `(5 + 5) / (8 * 3)`
+- `(0 / 0) + 1`
+
+If one of the operations results with error, the entire expression will be marked as errored.
+
 ### Getting result
 GET `http://localhost:8081/expression/42`
 
