@@ -16,6 +16,12 @@ not guaranteed.
 
 Web server will start at [localhost:8081](http://localhost:8081).
 
+### Database
+
+Saving operations to database is not implemented. The program uses in-memory storage.
+
+But there's a good foundation for the implementation for any database engine you want.
+
 ### Creating expression
 POST `http://localhost:8081/createExpression`
 
