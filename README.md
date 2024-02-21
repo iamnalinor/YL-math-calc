@@ -9,7 +9,8 @@ Task: Write a program that can calculate the value of a mathematical expression.
 
 1. Install Go from [the official website](https://golang.org/dl/).
 2. Clone the repository or download the source code.
-3. Run `go run/cmd/main.go` in the project directory.
+3. **Important: copy `config.json.dist` to `config.json`**. Example for Windows: `copy config.json.dist config.json`.
+4. Run `go run cmd/main.go` in the project directory.
 
 The project itself has no dependencies. The recommended Go version is 1.22. It should work on 1.21 too, however, it is
 not guaranteed.
