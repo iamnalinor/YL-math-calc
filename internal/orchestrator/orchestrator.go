@@ -56,7 +56,7 @@ func (o *Orchestrator) Run() {
 			o.app.Database.Update(op)
 			fallthrough
 		case operation.StatePending:
-			workerIn <- id
+			go send(workerIn, id)
 			// State will be updated in RunWorker()
 		case operation.StateProcessing:
 			break
