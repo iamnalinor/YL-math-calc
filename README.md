@@ -1,6 +1,6 @@
 # YL-math-calc
 
-# I'm getting the project done right now (yea, again). I'm would be glad if you could open this project tomorrow.
+# I'm getting the project done right now (yea, again). I would be glad if you could open this project tomorrow.
 
 ## Final Yandex.Lyceum project
 
