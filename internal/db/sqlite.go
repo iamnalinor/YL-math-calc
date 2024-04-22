@@ -162,3 +162,64 @@ func (d *SqliteDatabase) All() (map[operation.ID]operation.Operation, error) {
 	}
 	return ops, nil
 }
+
+type User struct {
+	ID           int
+	Username     string
+	PasswordSalt string
+	PasswordHash string
+}
+
+func (d *SqliteDatabase) GetUserByID(id int) (User, error) {
+	d.mx.RLock()
+	defer d.mx.RUnlock()
+
+	var q = `
+	SELECT * FROM users WHERE id = ?
+	`
+	row := d.conn.QueryRow(q, id)
+	var user User
+	err := row.Scan(&user.ID, &user.Username, &user.PasswordSalt, &user.PasswordHash)
+	if err != nil {
+		return User{}, fmt.Errorf("user with id %d not found", id)
+	}
+	return user, nil
+}
+
+func (d *SqliteDatabase) GetUserByUsername(username string) (User, error) {
+	d.mx.RLock()
+	defer d.mx.RUnlock()
+
+	var q = `
+	SELECT * FROM users WHERE username = ?
+	`
+	row := d.conn.QueryRow(q, username)
+	var user User
+	err := row.Scan(&user.ID, &user.Username, &user.PasswordSalt, &user.PasswordHash)
+	if err != nil {
+		return User{}, fmt.Errorf("user with username %s not found", username)
+	}
+	return user, nil
+}
+
+func (d *SqliteDatabase) CreateUser(username, passwordSalt, passwordHash string) (int, error) {
+	d.mx.Lock()
+	defer d.mx.Unlock()
+
+	var q = `
+	INSERT INTO users (username, password_salt, password_hash) VALUES (?, ?, ?)
+	`
+	result, err := d.conn.Exec(q, username, passwordSalt, passwordHash)
+	if err != nil {
+		return 0, err
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	return int(id), nil
+}
+
+func (d *SqliteDatabase) Close() error {
+	return d.conn.Close()
+}

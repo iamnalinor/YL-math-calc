@@ -7,6 +7,7 @@ import (
 	"math-calc/internal/operation"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -26,7 +27,21 @@ func getExpression(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	opIdRaw := r.URL.Path[len("/expression/"):]
+	bearerToken := r.Header.Get("Authorization")
+	if bearerToken == "" {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintln(w, "missing Authorization header")
+		return
+	}
+	bearerToken, _ = strings.CutPrefix(bearerToken, "Bearer ")
+	userId, err := checkJWT(bearerToken)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintln(w, "invalid token")
+		return
+	}
+
+	opIdRaw := r.URL.Path[len("/api/v1/expression/"):]
 	if opIdRaw == "" {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, "operation id is not specified")
@@ -44,6 +59,12 @@ func getExpression(w http.ResponseWriter, r *http.Request) {
 	op, err := app.Database.Get(operation.ID(opId))
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "operation not found")
+		return
+	}
+
+	if op.OwnerID != userId {
+		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprintln(w, "operation not found")
 		return
 	}

@@ -21,7 +21,7 @@ func NewApplication() *Application {
 		logger.Fatal(err)
 	}
 
-	database, err := db.NewSqlite("db.sqlite3")
+	database, err := db.NewSqlite(cfg.SqlitePath)
 	if err != nil {
 		logger.Fatal(err)
 	}

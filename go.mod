@@ -2,7 +2,10 @@ module math-calc
 
 go 1.22.0
 
-require modernc.org/sqlite v1.29.8
+require (
+	github.com/golang-jwt/jwt/v5 v5.2.1
+	modernc.org/sqlite v1.29.8
+)
 
 require (
 	github.com/dustin/go-humanize v1.0.1 // indirect

@@ -30,6 +30,19 @@ func (o *Orchestrator) Run() {
 	defer close(workerIn)
 	defer close(orchIn)
 
+	allOps, _ := o.app.Database.All()
+	for _, op := range allOps {
+		if op.State == operation.StateProcessing {
+			fmt.Printf("Operation %d is in processing state, setting it to pending\n", op.Id)
+			op.State = operation.StatePending
+			o.app.Database.Update(op)
+		}
+		if op.State == operation.StatePending {
+			fmt.Printf("Operation %d is in pending state, sending it to orchestrator\n", op.Id)
+			go send(orchIn, op.Id)
+		}
+	}
+
 	for i := 0; i < o.app.Config.GoroutineCount; i++ {
 		go RunWorker(o.app, workerIn, orchIn)
 	}

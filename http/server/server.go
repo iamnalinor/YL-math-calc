@@ -12,8 +12,10 @@ func Run(
 	app *application.Application,
 ) (func(context.Context) error, error) {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/createExpression", createExpression)
-	mux.HandleFunc("/expression/", getExpression)
+	mux.HandleFunc("/api/v1/register", userRegister)
+	mux.HandleFunc("/api/v1/login", userLogin)
+	mux.HandleFunc("/api/v1/createExpression", createExpression)
+	mux.HandleFunc("/api/v1/expression/", getExpression)
 
 	srv := &http.Server{
 		Addr:    "localhost:8081",

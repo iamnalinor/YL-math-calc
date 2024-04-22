@@ -11,6 +11,7 @@ import (
 	"math-calc/internal/operation"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 var usedIdempotentTokens = make(map[string]bool)
@@ -27,6 +28,20 @@ func createExpression(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		fmt.Fprintf(w, "only POST requests are allowed")
+		return
+	}
+
+	bearerToken := r.Header.Get("Authorization")
+	if bearerToken == "" {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintln(w, "missing Authorization header")
+		return
+	}
+	bearerToken, _ = strings.CutPrefix(bearerToken, "Bearer ")
+	userId, err := checkJWT(bearerToken)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintln(w, "invalid token")
 		return
 	}
 
@@ -60,7 +75,7 @@ func createExpression(w http.ResponseWriter, r *http.Request) {
 
 	app.Database.UpdatingMutex.Lock()
 
-	opId, err := parseExpression(input.Expression, app)
+	opId, err := parseExpression(input.Expression, app, userId)
 	op, _ := app.Database.Get(opId)
 	op.Expression = input.Expression
 	app.Database.Update(op)
@@ -71,7 +86,6 @@ func createExpression(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "failed to parse expression: %s", err)
 		return
-
 	}
 
 	w.WriteHeader(http.StatusCreated)
@@ -82,13 +96,13 @@ func createExpression(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func parseExpression(expression string, app *application.Application) (operation.ID, error) {
+func parseExpression(expression string, app *application.Application, ownerId int) (operation.ID, error) {
 	expr, err := parser.ParseExpr(expression)
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse expression: %w", err)
 	}
 
-	result, err := unparseTree(expr, app)
+	result, err := unparseTree(expr, app, ownerId)
 	if err != nil {
 		return 0, fmt.Errorf("failed to unparse expression: %w", err)
 	}
@@ -107,20 +121,21 @@ type unparseResult struct {
 
 var unparseResultEmpty = unparseResult{}
 
-func unparseTree(expr ast.Expr, app *application.Application) (unparseResult, error) {
+func unparseTree(expr ast.Expr, app *application.Application, ownerId int) (unparseResult, error) {
 	switch e := expr.(type) {
 	case *ast.BinaryExpr:
-		left, err := unparseTree(e.X, app)
+		left, err := unparseTree(e.X, app, ownerId)
 		if err != nil {
 			return unparseResultEmpty, err
 		}
 
-		right, err := unparseTree(e.Y, app)
+		right, err := unparseTree(e.Y, app, ownerId)
 		if err != nil {
 			return unparseResultEmpty, err
 		}
 
 		op := operation.Operation{}
+		op.OwnerID = ownerId
 
 		if left.OperationID != 0 {
 			op.LeftOperationID = left.OperationID
@@ -162,7 +177,7 @@ func unparseTree(expr ast.Expr, app *application.Application) (unparseResult, er
 
 		return unparseResult{Value: value}, nil
 	case *ast.ParenExpr:
-		return unparseTree(e.X, app)
+		return unparseTree(e.X, app, ownerId)
 	default:
 		return unparseResultEmpty, fmt.Errorf("unsupported expression type: %T", e)
 	}
