@@ -10,7 +10,7 @@ import (
 type Application struct {
 	Config   config.Config
 	Logger   *log.Logger
-	Database *db.Database
+	Database *db.SqliteDatabase
 }
 
 func NewApplication() *Application {
@@ -21,7 +21,7 @@ func NewApplication() *Application {
 		logger.Fatal(err)
 	}
 
-	database, err := db.New()
+	database, err := db.NewSqlite("db.sqlite3")
 	if err != nil {
 		logger.Fatal(err)
 	}

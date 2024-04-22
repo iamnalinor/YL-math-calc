@@ -84,7 +84,7 @@ func (o *Orchestrator) Run() {
 			allOps, _ := o.app.Database.All()
 			for _, other := range allOps {
 				if other.LeftOperationID == id || other.RightOperationID == id {
-					other.Error = fmt.Errorf("sub-operation %d failed: %w", op.Id, op.Error)
+					other.Error = fmt.Sprintf("sub-operation %d failed: %s", op.Id, op.Error)
 					other.State = operation.StateError
 					other.LeftOperationID = 0
 					other.RightOperationID = 0

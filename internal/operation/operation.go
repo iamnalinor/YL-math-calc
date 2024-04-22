@@ -36,7 +36,8 @@ const (
 )
 
 type Operation struct {
-	Id ID
+	Id      ID
+	OwnerID int
 	// Op represents type of operation that is performed on left and right values.
 	Op          Operator
 	State       State
@@ -55,7 +56,7 @@ type Operation struct {
 	RightOperationID ID
 
 	Result float64
-	Error  error
+	Error  string
 
 	// Expression field can be set in order to store the original expression.
 	// This doesn't influence orchestrator and workers in any way.

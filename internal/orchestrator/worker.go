@@ -24,7 +24,7 @@ func RunWorker(app *application.Application, in <-chan operation.ID, out chan<- 
 		app.Database.UpdatingMutex.Lock()
 		if err != nil {
 			op.State = operation.StateError
-			op.Error = fmt.Errorf("calculate failed: %w", err)
+			op.Error = fmt.Sprintf("calculate failed: %s", err)
 			app.Logger.Printf("worker: operation%d: failed to calculate: %s\n", op.Id, err)
 		} else {
 			op.State = operation.StateDone

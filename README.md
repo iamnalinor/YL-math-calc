@@ -10,18 +10,16 @@ Task: Write a program that can calculate the value of a mathematical expression.
 1. Install Go from [the official website](https://golang.org/dl/).
 2. Clone the repository or download the source code.
 3. **Important: copy `config.json.dist` to `config.json`**. Example for Windows: `copy config.json.dist config.json`.
-4. Run `go run cmd/main.go` in the project directory.
+4. Install dependencies by running `go mod tidy`.
+5. Run `go run cmd/main.go` in the project directory.
 
-The project itself has no dependencies. The recommended Go version is 1.22. It should work on 1.21 too, however, it is
-not guaranteed.
+The recommended Go version is 1.22. It should work on 1.21 too, however, it is not guaranteed.
 
 Web server will start at [localhost:8081](http://localhost:8081).
 
 ### Database
 
-Saving operations to database is not implemented. The program uses in-memory storage.
-
-But there's a good foundation for the implementation for any database engine you want.
+SQLite is used as the database. The database file is db.sqlite3. It is created automatically when the program is run.
 
 ### Creating expression
 POST `http://localhost:8081/createExpression`
