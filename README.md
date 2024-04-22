@@ -1,5 +1,8 @@
 # YL-math-calc
-## 1st semester Yandex.Lyceum project
+
+# I'm getting the project done right now (yea, again). I'm would be glad if you could open this project tomorrow.
+
+## Final Yandex.Lyceum project
 
 Task: Write a program that can calculate the value of a mathematical expression. But there's a catch: every operation takes a lot of time to be completed, say, 1 minute. The program should use Go parallelism to calculate the expression faster.
 
