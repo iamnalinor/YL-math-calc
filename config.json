@@ -1,0 +1,5 @@
+{
+  "goroutine_count": 8,
+  "operation_calculation_time": 100,
+  "sqlite_path": "db.sqlite3"
+}
