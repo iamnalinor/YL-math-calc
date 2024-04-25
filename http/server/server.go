@@ -18,7 +18,7 @@ func Run(
 	mux.HandleFunc("/api/v1/expression/", getExpression)
 
 	srv := &http.Server{
-		Addr:    "localhost:8081",
+		Addr:    "0.0.0.0:8081",
 		Handler: loggingMiddleware(app.Logger)(mux),
 		BaseContext: func(listener net.Listener) context.Context {
 			return context.WithValue(context.Background(), "app", app)
