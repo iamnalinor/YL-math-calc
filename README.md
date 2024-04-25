@@ -25,7 +25,7 @@ SQLite is used as the database. The database file is db.sqlite3. It is created a
 
 Create account:
 
-POST `http://localhost:8081/register`
+POST `http://localhost:8081/api/v1/register`
 
 Body:
 
@@ -44,7 +44,7 @@ curl -X POST http://localhost:8081/api/v1/register -d "{\"login\": \"your_login\
 
 Login:
 
-POST `http://localhost:8081/login`
+POST `http://localhost:8081/api/v1/login`
 
 Body:
 
@@ -73,7 +73,7 @@ Token is valid for 24 hours. **Add the token to the Authorization Bearer header 
 format `Authorization: Bearer <token>`**.
 
 ### Creating expression
-POST `http://localhost:8081/createExpression`
+POST `http://localhost:8081/api/v1/createExpression`
 
 Body:
 ```json
@@ -87,7 +87,7 @@ Additionally, you can specify idempotency token in `X-Idempotency-Token`.
 Result:
 
 ```json
-{"id":2}
+{"id":42}
 ```
 
 Curl example:
