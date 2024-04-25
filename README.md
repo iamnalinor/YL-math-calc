@@ -127,7 +127,7 @@ Result:
 
 Curl example:
 ```bash
-curl http://localhost:8081/expression/42 -H "Authorization: Bearer <token>"
+curl http://localhost:8081/api/v1/expression/42 -H "Authorization: Bearer <token>"
 ```
 
 Replace `<token>` with the token obtained from the `/login` endpoint.
